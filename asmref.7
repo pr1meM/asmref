@@ -1,0 +1,166 @@
+.TH ASMREF "June 2026" "asmref" "Miscellaneous Information Manual"
+.SH NAME
+asmref \- Cheat sheet for Linux syscalls, architectures and assembly basics
+
+
+.SH DESCRIPTION
+This man page is a cheat sheet for assembly instructions, different CPU architectures, and Linux syscall numbers.
+
+The goal is to provide a well-organized reference sheet with useful information for low-level programming and reverse engineering.
+
+.SH CONTENT
+The cheat sheet includes:
+.IP \(bu 2
+Syscall numbers
+.IP \(bu 2
+Different architectures
+.IP \(bu 2
+Basic assembly-related concepts
+
+.SH SYSCALLS
+
+.SH OVERVIEW
+A syscall (system call) is a controlled interface that allows user space (ring 3) to request services from the kernel (ring 0).
+
+For example, operations like reading files or writing output require a syscall. When a syscall is executed, the CPU switches from user mode to kernel mode to execute privileged operations.
+
+.SH SYSCALL TABLE
+.TS
+tab(@);
+l r l p
+l r l p.
+Syscall@Nr.@C Example@Description
+read@0@read(fd, buf, 1024);@Read data from a file descriptor into a buffer
+write@1@write(1, "Hello\\n", 6);@Write data to a file descriptor
+open@2@open("file.txt", O_RDONLY);@Open a file and return a file descriptor
+close@3@close(fd);@Close an open file descriptor
+stat@4@stat("file", &st);@Get file metadata
+fstat@5@fstat(fd, &st);@Get metadata of open file
+lstat@6@lstat("link", &st);@Get metadata without following symlinks
+poll@7@poll(fds, nfds, 1000);@Wait for events on file descriptors
+lseek@8@lseek(fd, 0, SEEK_SET);@Move file offset
+mmap@9@mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);@Map memory or files
+mprotect@10@mprotect(addr, len, PROT_READ);@Change memory protection
+munmap@11@munmap(addr, len);@Unmap memory
+brk@12@brk(end);@Change heap boundary
+rt_sigaction@13@sigaction(SIGINT, &sa, NULL);@Set signal handler
+rt_sigprocmask@14@sigprocmask(SIG_BLOCK, &set, NULL);@Block signals
+ioctl@16@ioctl(fd, cmd, arg);@Device control
+pread64@17@pread(fd, buf, n, off);@Read at offset
+pwrite64@18@pwrite(fd, buf, n, off);@Write at offset
+readv@19@readv(fd, iov, cnt);@Read into multiple buffers
+writev@20@writev(fd, iov, cnt);@Write from multiple buffers
+access@21@access("file", R_OK);@Check file permissions
+pipe@22@pipe(fds);@Create pipe
+select@23@select(n, &r, &w, &e, &tv);@Monitor file descriptors
+sched_yield@24@sched_yield();@Yield CPU
+dup@32@dup(fd);@Duplicate file descriptor
+dup2@33@dup2(oldfd, newfd);@Duplicate fd to specific number
+nanosleep@35@nanosleep(&ts, NULL);@Sleep for precise time
+alarm@37@alarm(5);@Set alarm signal
+getpid@39@getpid();@Get process ID
+socket@41@socket(AF_INET, SOCK_STREAM, 0);@Create socket
+connect@42@connect(fd, &addr, len);@Connect to remote socket
+accept@43@accept(fd, NULL, NULL);@Accept connection
+sendto@44@sendto(fd, buf, len, 0, ...);@Send data
+recvfrom@45@recvfrom(fd, buf, len, 0, ...);@Receive data
+sendmsg@46@sendmsg(fd, &msg, 0);@Send structured message
+recvmsg@47@recvmsg(fd, &msg, 0);@Receive structured message
+shutdown@48@shutdown(fd, SHUT_RDWR);@Disable socket I/O
+bind@49@bind(fd, &addr, len);@Bind socket
+listen@50@listen(fd, 128);@Listen for connections
+getsockname@51@getsockname(fd, &addr, &len);@Get local socket name
+getpeername@52@getpeername(fd, &addr, &len);@Get remote socket name
+socketpair@53@socketpair(AF_UNIX, SOCK_STREAM, 0, sv);@Create socket pair
+fork@57@fork();@Create process
+vfork@58@vfork();@Create process sharing memory
+execve@59@execve(path, argv, envp);@Execute program
+exit@60@exit(0);@Terminate process
+wait4@61@waitpid(pid, &st, 0);@Wait for process
+kill@62@kill(pid, SIGTERM);@Send signal
+uname@63@uname(&u);@System info
+semget@64@semget(key, 1, IPC_CREAT);@Semaphore create/get
+semop@65@semop(id, ops, n);@Semaphore operations
+shmget@29@shmget(key, size, IPC_CREAT);@Shared memory create
+shmat@30@shmat(id, NULL, 0);@Attach shared memory
+fcntl@72@fcntl(fd, F_GETFL);@File control
+flock@73@flock(fd, LOCK_EX);@File lock
+fsync@74@fsync(fd);@Flush to disk
+truncate@76@truncate(file, len);@Resize file
+getcwd@79@getcwd(buf, size);@Get working directory
+chdir@80@chdir("/tmp");@Change directory
+rename@82@rename("a","b");@Rename file
+mkdir@83@mkdir("dir", 0755);@Create directory
+rmdir@84@rmdir("dir");@Remove directory
+creat@85@creat("file", 0644);@Create file
+link@86@link("src","dst");@Hard link
+unlink@87@unlink("file");@Delete file
+symlink@88@symlink("src","dst");@Symbolic link
+readlink@89@readlink(path, buf, size);@Read symlink
+chmod@90@chmod(file, 0644);@Change permissions
+chown@92@chown(file, uid, gid);@Change owner
+umask@95@umask(022);@Set default permissions
+gettimeofday@96@gettimeofday(&tv, NULL);@Get time
+getuid@102@getuid();@User ID
+getgid@104@getgid();@Group ID
+setuid@105@setuid(uid);@Set user ID
+setgid@106@setgid(gid);@Set group ID
+geteuid@107@geteuid();@Effective UID
+getegid@108@getegid();@Effective GID
+setpgid@109@setpgid(pid, pgid);@Set process group
+getppid@110@getppid();@Parent PID
+setsid@112@setsid();@Create session
+waitid@247@waitid(P_PID, pid, &info, 0);@Wait process detailed
+clock_gettime@228@clock_gettime(CLOCK_MONOTONIC, &ts);@High-res time
+clock_nanosleep@230@clock_nanosleep(...);@Sleep with clock
+tgkill@234@tgkill(pid, tid, SIGUSR1);@Signal thread
+utimensat@280@utimensat(...);@Timestamp update
+eventfd@284@eventfd(0,0);@Event notification
+epoll_create1@291@epoll_create1(0);@Create epoll
+epoll_ctl@233@epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);@Control epoll
+epoll_wait@232@epoll_wait(epfd, ev, max, -1);@Wait epoll events
+dup3@292@dup3(fd, newfd, O_CLOEXEC);@Duplicate fd with flags
+pipe2@293@pipe2(fds, O_CLOEXEC);@Pipe with flags
+accept4@288@accept4(fd, NULL, NULL, SOCK_CLOEXEC);@Accept with flags
+getrandom@318@getrandom(buf, len, 0);@Random bytes
+memfd_create@319@memfd_create("tmp", 0);@Memory file
+statx@332@statx(fd, path, 0, mask, &stx);@Extended stat
+pidfd_open@434@pidfd_open(pid, 0);@Process fd
+clone3@435@clone3(&args, sizeof(args));@Advanced clone
+openat2@437@openat2(dirfd, path, &how, sizeof(how));@Secure open
+.TE
+
+.SH ARCHITECTURES
+.IP \(bu 2
+ARM64 \- mostly used in phones, efficient performance
+.IP \(bu 2
+x86 \- older 32-bit PCs
+.IP \(bu 2
+x86_64 \- modern standard for PCs (Windows/Linux), best performance for desktop and gaming
+
+.SH ASSEMBLY SYNTAX
+There are two main syntaxes:
+.IP \(bu 2
+AT&T (GNU/Linux default)
+.IP \(bu 2
+Intel syntax (cleaner, commonly used in documentation)
+
+.SH COMPILATION FLOW
+High Level (C)
+.br
+↓
+Assembly (Intel / AT&T)
+.br
+↓
+Assembler (NASM / GAS)
+.br
+↓
+Machine Code (0/1)
+.br
+↓
+CPU (x86_64 / ARM64)
+
+.SH SEE ALSO
+.BR syscall (2),
+.BR strace (1),
+.BR gcc (1)
