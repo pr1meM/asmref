@@ -7,7 +7,9 @@ It is always useful to have a quick reference. I did not find any manpage, which
 ## How to use?
 
 Step 1:    `sudo cp asmref.7 /usr/local/share/man/man7/`
+
 Step 2:    `sudo mandb`
+
 Open with: `man 7 asmref`
 
 ---
