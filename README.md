@@ -1,7 +1,7 @@
 # Linux assembly reference man page (asmref)
 ---
 ## Why?
-It is always useful to have a quick reference. I did not find any manpage, which contains all useful syscalls, with examples,numbers and description. I really like man pages so i decided to make one. You can always take a look into this man page, while programming, reverse engineering and exploit development. Its mainly for beginners but also for everyone else who just wants to have a quick reference.
+I couldn't find a man page covering all the useful syscalls in one place, numbers, examples, and descriptions included, so I wrote one myself. It's meant as a quick reference for programming, reverse engineering, and exploit development. Mainly aimed at beginners, but useful for anyone who wants a fast lookup.
 
 ---
 ## How to use?
